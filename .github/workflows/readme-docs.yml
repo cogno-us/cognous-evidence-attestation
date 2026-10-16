@@ -21,8 +21,8 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           text = Path("README.md").read_text()
-          assert "5b5077dafde232a7801cb425c4efddcffb468723" in text
-          assert "5786b91696ffa276650c4f7b424c9662ebf96fac" in text
+          assert "https://github.com/cogno-us/cognous-open-control-stack/blob/main/component-lock.json" in text
+          assert "https://github.com/cogno-us/cognous-stack-qualification/blob/main/results/readme-commentary/index.md" in text
           assert "non-authorizing" in text.lower() or "does not establish" in text.lower()
           assert "component-lock.json" in text
           print("README status and authority boundary assertions passed")
