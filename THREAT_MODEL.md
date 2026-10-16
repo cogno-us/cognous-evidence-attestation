@@ -6,8 +6,8 @@ This document outlines the threat model for BitRep’s identity, attestation, re
 - ensure identities cannot be forged
 - ensure attestations cannot be tampered with
 - ensure reputation scores are deterministic and auditable
-- limit the impact of Sybil attacks
-- prevent unauthorized modification of proposals, votes, or tallies
+- limit the impact of Sybil attacks (design goal; **not met** by the prototype governance API, see [Current Implementation Limits](#current-implementation-limits))
+- prevent unauthorized modification of proposals, votes, or tallies (design goal; **not met** by the prototype governance API, see [Current Implementation Limits](#current-implementation-limits))
 - avoid leaking sensitive graph structure where possible
 
 ## Out-of-Scope Goals
@@ -63,7 +63,7 @@ Attackers are *not* assumed to:
 
 ### Governance Capture
 **Threat:** attacker attempts to dominate voting.  
-**Mitigation:** quadratic voting; reputation-weighted power; deterministic tallies.
+**Mitigation (design only, not implemented):** quadratic voting; reputation-weighted power; deterministic tallies. The prototype `POST /governance/vote` handler gives every existing identity a fixed weight of 1.0 and does not apply these mitigations.
 
 ### Privacy Leakage
 **Threat:** attacker infers sensitive relationships from graph structure.  
@@ -81,5 +81,11 @@ Attackers are *not* assumed to:
 - contributors act in good faith unless proven otherwise
 - users manage their private keys responsibly
 
+## Current Implementation Limits
+These limits describe the legacy prototype API in this repository. They do not affect the separate v1 verification contract.
+- **Governance writes are unauthenticated.** `POST /governance/proposal` and `POST /governance/vote` accept a caller-supplied `proposer` or `voter` string and check only that the username exists. No key, signature or session binds the request to that identity, so any caller who can reach the API can create proposals or cast votes in another identity's name.
+- **Unlimited identities mean unlimited votes.** `POST /identity/create` is a public operation, and the vote handler counts each existing identity as one vote of weight 1.0, whether or not that identity is verified. An attacker who creates many identities can decide prototype proposal outcomes. The prototype does not limit Sybil attacks and does not resist governance capture.
+- **Integration records are unauthenticated and stay unverified.** `POST /integration/import` and `POST /integration/github/import` let any caller attach arbitrary platform data to an existing username. Rows are stored as pending (`verified=0`). The verification route returns 501, so callers cannot promote these records to verified, and they must not be treated as evidence about the named user.
+
 ## Summary
-BitRep is designed to resist identity forgery, attestation tampering, graph manipulation, and governance capture. It does not attempt to solve client-side security, metadata privacy, or advanced adversarial coordination. The system is secure when used within these boundaries.
+BitRep's design aims to resist identity forgery, attestation tampering, graph manipulation, and governance capture. The current prototype governance and integration APIs do not meet the governance-capture or Sybil goals (see [Current Implementation Limits](#current-implementation-limits)). BitRep does not attempt to solve client-side security, metadata privacy, or advanced adversarial coordination. This document does not claim that the system is secure or production-ready.

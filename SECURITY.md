@@ -70,6 +70,13 @@ BitRep does **not** assume:
 - secure client devices  
 - private network environments  
 
+Because attackers can create arbitrary identities, the legacy prototype API does **not** currently resist Sybil amplification or governance capture:
+- governance proposal and vote endpoints trust a caller-supplied `proposer` / `voter` username, with no credential check;
+- each existing identity, verified or not, counts as one vote of weight 1.0, so unlimited identities give unlimited votes;
+- third-party integration imports are unauthenticated, are stored as unverified (pending), and cannot be promoted, because the verification route returns 501.
+
+See [THREAT_MODEL.md](THREAT_MODEL.md#current-implementation-limits). These limits do not affect the separate v1 verification contract.
+
 ## Responsible Disclosure
 If you discover a vulnerability:
 - report privately  
