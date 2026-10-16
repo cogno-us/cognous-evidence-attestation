@@ -168,6 +168,9 @@ def verify_authority_digest_custody(
         return _result(claim, "witness_present_in_publisher_trust", publisher_result)
     if any(key.issuer == claim.publisher_ref for key in witness_trust.keys):
         return _result(claim, "publisher_present_in_witness_trust", publisher_result)
+    publisher_key_material = {key.public_key for key in publisher_trust.keys}
+    if any(key.public_key in publisher_key_material for key in witness_trust.keys):
+        return _result(claim, "shared_key_material_across_trust_snapshots", publisher_result)
 
     commitment = WitnessCommitment(
         authority_claim_digest=claim_digest(claim),

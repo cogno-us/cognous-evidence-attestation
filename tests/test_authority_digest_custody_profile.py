@@ -219,3 +219,45 @@ def test_fixture_claim_matches_exact_synthetic_bytes():
     claim = AuthorityDigestClaim.model_validate(data["claim"])
     assert claim.authority_digest == sha256(raw)
     assert data["synthetic_only"] is True
+
+
+def test_same_public_key_under_publisher_and_witness_names_is_rejected():
+    publisher_key = Ed25519PrivateKey.generate()
+    raw = b"policy-v3:refund-limit=1000"
+    claim = AuthorityDigestClaim(
+        authority_kind="policy",
+        authority_id="policy:refund-v3",
+        authority_epoch=3,
+        authority_digest=sha256(raw),
+        effective_from=NOW - 50,
+        effective_until=NOW + 200,
+        observed_at=NOW - 10,
+        publisher_ref="issuer:authority-publisher",
+        witness_ref="issuer:independent-witness",
+    )
+    publisher_trust = trust(publisher_key, claim.publisher_ref, "key:publisher")
+    # Same Ed25519 key bytes enrolled under a different issuer name and key ID.
+    witness_trust = trust(publisher_key, claim.witness_ref, "key:witness")
+    assert publisher_trust.fingerprint() != witness_trust.fingerprint()
+    publisher = signed(
+        publisher_key, claim.publisher_ref, "key:publisher", claim.authority_id,
+        "authority_digest_publisher", claim_digest(claim), claim.observed_at,
+    )
+    commitment = WitnessCommitment(
+        authority_claim_digest=claim_digest(claim),
+        publisher_statement_digest=statement_digest(publisher.statement),
+        publisher_trust_snapshot=publisher_trust.fingerprint(),
+        authority_digest=claim.authority_digest,
+        authority_epoch=claim.authority_epoch,
+        observed_at=claim.observed_at,
+        publisher_ref=claim.publisher_ref,
+        witness_ref=claim.witness_ref,
+    )
+    witness = signed(
+        publisher_key, claim.witness_ref, "key:witness",
+        statement_digest(publisher.statement), "authority_digest_witness",
+        witness_digest(commitment), NOW - 9,
+    )
+    result = verify((raw, claim, publisher, publisher_trust, witness, witness_trust))
+    assert not result.accepted
+    assert result.reason == "shared_key_material_across_trust_snapshots"
