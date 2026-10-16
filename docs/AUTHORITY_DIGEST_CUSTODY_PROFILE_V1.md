@@ -24,7 +24,7 @@ The profile authenticates custody assertions. It does not decide whether the ref
 | Independent witness | Signs a commitment to the publisher statement and publisher trust snapshot | Does not approve the policy/grant or the downstream decision |
 | Relying verifier | Supplies current trusted time, expected epoch and two explicit trust snapshots | Does not discover trust or mint credentials |
 
-The bounded profile requires `publisher_ref != witness_ref`, distinct trust-snapshot fingerprints, and no cross-enrollment of the witness issuer in the publisher snapshot or publisher issuer in the witness snapshot. These checks are conservative synthetic independence checks, not proof of organizational independence.
+The bounded profile requires `publisher_ref != witness_ref`, distinct trust-snapshot fingerprints, and no cross-enrollment of the witness issuer in the publisher snapshot or publisher issuer in the witness snapshot, and no Ed25519 public key shared between the two snapshots under any issuer name. These checks are conservative synthetic independence checks, not proof of organizational independence.
 
 ## Claim schema
 
