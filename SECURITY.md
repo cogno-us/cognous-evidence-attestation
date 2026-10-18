@@ -28,7 +28,7 @@ The following components are in scope for security review:
 - reputation scoring logic  
 - governance proposal and voting mechanisms  
 - API endpoints and request validation  
-- cryptographic operations (RSA signatures, hashing, verification)
+- cryptographic operations (Ed25519 v1 signatures, legacy RSA helpers, hashing, verification)
 
 ## Out of Scope
 The following are not considered security vulnerabilities:
@@ -40,7 +40,7 @@ The following are not considered security vulnerabilities:
 
 ## Cryptographic Assumptions
 BitRep currently uses:
-- RSA‑2048 for identity and attestation signatures  
+- v1 attestations: Ed25519 (see docs/ADR-001). Legacy RSA‑2048 helpers are retained for the prototype API but are not accepted by v1  
 - SHA‑256 for hashing  
 - deterministic signature verification  
 - no custom cryptography  

@@ -132,14 +132,22 @@ def verify_authority_digest_custody(
     witness_trust: TrustRegistry | None,
     expected_epoch: int,
     now: int,
+    expected_authority_id: str | None = None,
 ) -> CustodyVerification:
     """Verify bounded digest custody under two explicit independent snapshots.
 
     The caller supplies current trusted snapshots and trusted current time. The
     function neither discovers trust nor issues/validates institutional grants.
+    `now` must also fall inside the claim's effective interval. When
+    `expected_authority_id` is given the claim must name exactly that id; when it
+    is omitted the id is not compared (callers should pass it).
     """
     if expected_epoch != claim.authority_epoch:
         return _result(claim, "wrong_epoch")
+    if expected_authority_id is not None and claim.authority_id != expected_authority_id:
+        return _result(claim, "wrong_authority_id")
+    if not claim.effective_from <= now < claim.effective_until:
+        return _result(claim, "claim_not_current")
     if _sha256(authority_bytes) != claim.authority_digest:
         return _result(claim, "authority_digest_mismatch")
 

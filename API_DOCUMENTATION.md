@@ -197,22 +197,6 @@ Content-Type: application/json
 }
 ```
 
-#### Get Reputation Band
-Returns reputation in broad bands for privacy.
-
-```http
-GET /privacy/reputation-bands/{username}
-```
-
-Response:
-```json
-{
-  "username": "alice",
-  "reputation_band": "50-100",
-  "message": "Reputation shown in bands for privacy"
-}
-```
-
 #### Selective Disclosure
 Create proof for specific attestations without revealing all.
 

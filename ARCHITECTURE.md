@@ -13,15 +13,15 @@ The identity layer provides the foundation for all attestations and trust relati
 ## Attestation Layer
 - signed statements — identities issue attestations about others
 - mutual validation — attestations include issuer, subject, weight, and signature
-- Sybil‑resistant structure — clustering and issuer‑credibility weighting
+- Sybil‑resistant structure — clustering and issuer‑credibility weighting (design goal, not implemented)
 - import adapters — GitHub, eBay, LinkedIn, StackOverflow
 
 Attestations form the edges of the trust graph and are the primary input to reputation scoring.
 
 ## Reputation Layer
 - trust graph — directed, weighted graph built from attestations
-- propagation algorithm — modified PageRank with damping and issuer weighting
-- Sybil resistance — cluster detection and weight normalization
+- propagation algorithm — modified PageRank with damping and issuer weighting (design goal, not implemented)
+- Sybil resistance — cluster detection and weight normalization (design goal, not implemented)
 - score bands — coarse‑grained outputs for privacy‑preserving use
 
 Reputation is computed from the global graph, not from any single platform.

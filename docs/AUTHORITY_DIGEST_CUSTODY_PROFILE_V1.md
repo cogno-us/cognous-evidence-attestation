@@ -63,14 +63,16 @@ The witness statement must not predate `observed_at`.
 The reference profile verifier fails closed in this order:
 
 1. expected epoch matches the claim;
-2. exact authority bytes hash to `authority_digest`;
-3. publisher issuer, scope, claim digest and observed time match;
-4. publisher attestation verifies under the supplied current publisher trust snapshot;
-5. a witness and witness trust snapshot are present;
-6. publisher and witness trust configuration satisfies the bounded independence checks;
-7. witness issuer, scope and witness commitment digest match;
-8. witness is not backdated before the publisher observation;
-9. witness attestation verifies under the supplied current witness trust snapshot.
+2. when the caller passes `expected_authority_id`, the claim names exactly that id (`wrong_authority_id`); when it is omitted the id is not compared, so callers should pass it;
+3. the supplied `now` falls inside the claim's effective interval (`claim_not_current`);
+4. exact authority bytes hash to `authority_digest`;
+5. publisher issuer, scope, claim digest and observed time match;
+6. publisher attestation verifies under the supplied current publisher trust snapshot;
+7. a witness and witness trust snapshot are present;
+8. publisher and witness trust configuration satisfies the bounded independence checks;
+9. witness issuer, scope and witness commitment digest match;
+10. witness is not backdated before the publisher observation;
+11. witness attestation verifies under the supplied current witness trust snapshot.
 
 The accepted BitRep verifier retains its existing conservative revocation behavior. Revoked keys and stale/future trust snapshots therefore fail the custody profile closed.
 
@@ -84,6 +86,8 @@ The accepted BitRep verifier retains its existing conservative revocation behavi
 - revoked publisher key;
 - stale publisher trust snapshot;
 - wrong authority epoch;
+- a claim whose effective interval has ended, or has not begun, at the supplied `now`;
+- a claim for a different authority id than the caller expects;
 - missing witness;
 - a witness signature whose issuance time predates the publisher observation; and
 - an `observed_at` value outside the effective interval.

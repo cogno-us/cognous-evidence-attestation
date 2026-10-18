@@ -68,7 +68,7 @@ def signed(key, issuer, key_id, subject, statement_type, digest, issued_at):
     )
 
 
-def fixture(kind="policy", witness_time=NOW - 9):
+def fixture(kind="policy", witness_time=NOW - 9, effective_until=NOW + 200):
     publisher_key = Ed25519PrivateKey.generate()
     witness_key = Ed25519PrivateKey.generate()
     raw = (
@@ -82,7 +82,7 @@ def fixture(kind="policy", witness_time=NOW - 9):
         authority_epoch=3,
         authority_digest=sha256(raw),
         effective_from=NOW - 50,
-        effective_until=NOW + 200,
+        effective_until=effective_until,
         observed_at=NOW - 10,
         publisher_ref="issuer:authority-publisher",
         witness_ref="issuer:independent-witness",
@@ -120,7 +120,7 @@ def fixture(kind="policy", witness_time=NOW - 9):
     return raw, claim, publisher, publisher_trust, witness, witness_trust
 
 
-def verify(values, expected_epoch=3, witness=True):
+def verify(values, expected_epoch=3, witness=True, now=NOW, **extra):
     raw, claim, publisher, publisher_trust, witness_attestation, witness_trust = values
     return verify_authority_digest_custody(
         authority_bytes=raw,
@@ -130,7 +130,8 @@ def verify(values, expected_epoch=3, witness=True):
         witness_attestation=witness_attestation if witness else None,
         witness_trust=witness_trust if witness else None,
         expected_epoch=expected_epoch,
-        now=NOW,
+        now=now,
+        **extra,
     )
 
 
@@ -261,3 +262,25 @@ def test_same_public_key_under_publisher_and_witness_names_is_rejected():
     result = verify((raw, claim, publisher, publisher_trust, witness, witness_trust))
     assert not result.accepted
     assert result.reason == "shared_key_material_across_trust_snapshots"
+
+
+def test_claim_outside_its_effective_interval_at_now_is_refused():
+    values = fixture(effective_until=NOW + 5)
+    assert verify(values, now=NOW).accepted  # valid control: inside the interval
+    # attestations and trust snapshots are still current at NOW + 50; only the claim interval has ended
+    assert verify(values, now=NOW + 50).reason == "claim_not_current"
+    assert not verify(values, now=NOW + 50).accepted
+
+
+def test_claim_not_yet_effective_at_now_is_refused():
+    values = fixture()
+    assert verify(values, now=NOW - 60).reason == "claim_not_current"
+
+
+def test_expected_authority_id_binds_the_claim_to_the_caller_expectation():
+    values = fixture()
+    assert verify(values, expected_authority_id="policy:refund-v3").accepted  # valid control
+    assert verify(values).accepted  # omitted: behaviour unchanged
+    result = verify(values, expected_authority_id="policy:other")
+    assert result.reason == "wrong_authority_id"
+    assert not result.accepted
