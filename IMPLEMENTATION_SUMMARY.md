@@ -1,5 +1,8 @@
 > **Implementation status:** The enforced attestation interface is the [proposed v1 verification contract](docs/VERIFICATION_CONTRACT_V1.md), pending Governor review. Legacy unsigned/RSA ingestion is not accepted. Demonstration privacy and placeholder identity/platform verification cannot establish assurance. Older examples and aspirational claims below do not describe v1 acceptance or production readiness.
 
+> **Historical summary.** Sections below describe an earlier implementation plan. `utils/reputation.py` and quadratic vote scaling are not in this repository: no reputation, clustering or damping code exists, and every vote has a fixed weight of 1.0 (see THREAT_MODEL.md).
+
+
 # Implementation Summary
 
 ## Overview

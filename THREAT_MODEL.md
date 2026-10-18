@@ -47,7 +47,7 @@ Attackers are *not* assumed to:
 
 ### Identity Forgery
 **Threat:** attacker attempts to impersonate another identity.  
-**Mitigation:** RSA signatures; deterministic verification; no shared secrets.
+**Mitigation:** not mitigated in the legacy API: identities are names, no request is signature-bound and the server generates the keypairs (see Current Implementation Limits). For v1, signature verification against an operator-configured trust snapshot is the mitigation.
 
 ### Attestation Manipulation
 **Threat:** attacker modifies or injects forged attestations.  
@@ -55,7 +55,7 @@ Attackers are *not* assumed to:
 
 ### Sybil Amplification
 **Threat:** attacker creates many identities to inflate reputation.  
-**Mitigation:** issuer-weight normalization; cluster detection; propagation damping.
+**Mitigation (design goal, not implemented):** issuer-weight normalization; cluster detection; propagation damping. No reputation, clustering or damping code exists in this repository.
 
 ### Graph Poisoning
 **Threat:** attacker issues malicious attestations to distort trust graph.  
@@ -67,7 +67,7 @@ Attackers are *not* assumed to:
 
 ### Privacy Leakage
 **Threat:** attacker infers sensitive relationships from graph structure.  
-**Mitigation:** coarse-grained score bands; optional ZK threshold proofs.
+**Mitigation:** none implemented. The ZK helpers are demonstrations whose verifiers never verify, and the `/privacy/*` routes are demonstrations; score bands rest on a reputation score that is not computed.
 
 ## Residual Risks
 - large, coordinated Sybil clusters may still influence outcomes

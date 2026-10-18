@@ -7,9 +7,9 @@ This document defines the BitRep protocol: identities, attestations, reputation 
 ## 1. Identity
 
 ### 1.1 Keypairs
-- RSA‑2048 keypairs generated client‑side.
+- Legacy prototype: RSA‑2048 keypairs, not accepted by v1.
 - Public key = decentralized identifier (DID).
-- Private key never leaves the client.
+- Legacy prototype: the server generates the keypair and returns the private key once in the response; v1 issuer keys are provisioned out of band.
 
 ### 1.2 Identity Document
 Each identity exposes:
@@ -88,7 +88,7 @@ A proposal includes:
 A proposal is finalized when:
 - deadline passes
 - tally is computed
-- result is signed by the service
+- the result is recorded as a tally; the legacy prototype produces no signed result
 
 ---
 

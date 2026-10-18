@@ -1,3 +1,5 @@
+> **Historical design, not implemented.** This file describes an earlier design. Most routes below do not exist. The legacy prototype routes are `POST /identity/create`, `GET /identity/{username}`, `POST /identity/{username}/verify`, `POST /attest`, `POST /verify`, `GET /attestations/{digest}`, `GET /user/{username}`, the `/governance/*` routes, the `/privacy/*` demonstration routes (not verifying) and the `/integration/*` routes; the enforced attestation interface is the v1 verification contract. Votes and governance writes are unauthenticated (see THREAT_MODEL.md).
+
 > **Implementation status:** The enforced attestation interface is the [proposed v1 verification contract](docs/VERIFICATION_CONTRACT_V1.md), pending Governor review. Legacy unsigned/RSA ingestion is not accepted. Demonstration privacy and placeholder identity/platform verification cannot establish assurance. Older examples and aspirational claims below do not describe v1 acceptance or production readiness.
 
 # BitRep API Reference
