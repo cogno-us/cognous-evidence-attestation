@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
 class AttestationIn(BaseModel):
     issuer: str
@@ -20,10 +20,6 @@ class AttestationOut(BaseModel):
 
     model_config = {"from_attributes": True}
 
-class UserAttestations(BaseModel):
-    user: str
-    attestations: List[AttestationOut]
-
 class UserIdentity(BaseModel):
     username: str
     public_key: str
@@ -31,8 +27,3 @@ class UserIdentity(BaseModel):
 
 class UserIdentityCreate(BaseModel):
     username: str
-
-class ZKProof(BaseModel):
-    proof: str
-    threshold: int
-    verified: bool
