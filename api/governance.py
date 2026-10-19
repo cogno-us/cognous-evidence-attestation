@@ -2,7 +2,6 @@
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 from db.connection import SessionLocal
 from models.governance import GovernanceProposalModel, VoteModel, ProposalStatus
 from models.identity import UserIdentityModel
