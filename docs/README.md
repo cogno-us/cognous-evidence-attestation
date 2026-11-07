@@ -21,6 +21,7 @@ A successful v1 verification means `issuer_signature_only`: the configured key s
 | --- | --- | --- |
 | [Authority digest custody profile v1](AUTHORITY_DIGEST_CUSTODY_PROFILE_V1.md) | proposed | Publisher claim plus an independent witness commitment over an authority digest; result `non_authorizing_digest_custody`. Includes the effective-interval and optional expected-id checks. |
 | [Custody claim schema](authority-digest-custody-v1.schema.json) | proposed | JSON Schema of the claim. |
+| [Verifier-result attestation profile (development only)](VERIFIER_RESULT_PROFILE_V1_DEV.md) | proposed | Unsigned statement over exact Verifier report bytes plus profile checks on a separately signed envelope; development keys exist only in test code. `issuer_signature_only`, non-authorizing. |
 
 ## Security, governance and contribution
 
